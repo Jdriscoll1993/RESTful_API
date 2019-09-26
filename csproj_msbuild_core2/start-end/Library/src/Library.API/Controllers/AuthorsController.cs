@@ -20,22 +20,33 @@ namespace Library.API.Controllers
             _libraryRepository = libraryRepository;
         }
         // In this action we should get the authors from our repository and return them. But we need an instance of our repository.
+
+        //GET api/authors
         [HttpGet]
         public IActionResult GetAuthors()
         {
+            
             var authorsFromRepo = _libraryRepository.GetAuthors();
+
             var authors = Mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo);
 
-            return new JsonResult(authors);
+            return Ok(authors);
         }
 
+        //GET api/authors/{id}
         [HttpGet("{id}")]
         public IActionResult GetAuthor(Guid id)
         {
             //call into repository to get our author
             var authorFromRepo = _libraryRepository.GetAuthor(id);
+
+            if (authorFromRepo == null)
+            {
+                return NotFound();
+            }
+
             var author = Mapper.Map<AuthorDto>(authorFromRepo);
-            return new JsonResult(author);
+            return Ok(author);
         }
     }
 }
