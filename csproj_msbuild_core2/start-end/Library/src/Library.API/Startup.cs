@@ -52,7 +52,16 @@ namespace Library.API
             }
             else
             {
-                app.UseExceptionHandler();
+                //add configuration to exception handler middleware to have it return a generic error message. Configure by passing in a lambda that returns an action on IApplicationBuilder.
+                app.UseExceptionHandler(appBuilder =>
+                {
+                    //then call run on that appBuilder. Adds a piece of code to the request response pipeline. Make sure that the SC is 500 and that we write out a generic error message in the response body.
+                    appBuilder.Run(async context =>
+                    {
+                    context.Response.StatusCode = 500;
+                    await context.Response.WriteAsync("An unexpected fault happened. Try again later");
+                    });
+                });
             }
 
             AutoMapper.Mapper.Initialize(cfg =>
